@@ -12,3 +12,163 @@
 4. max_element, min_element
 	- max_element(vec.begin(), vec.end()) 와 같이 사용
 	- iterator를 반환하므로, 앞에 *를 붙여서 사용해야 함. (*max_element(vec.begin(), vec.end())
+
+11/15
+1. fill
+   - #include <algorithm>에 포함되어 있음
+   - fill(array, array+n, a) 와 같이 사용
+   - array의 element를 n개만큼 a로 채운다.
+
+11/16
+
+malloc, free와 new, delete의 차이
+  - malloc은 힙에서 메모리를 가져와서 리턴한다. 실패하면 null 반환.
+    때문에 malloc은 사용할 때마다 제대로 작동했는지 if문을 통해 확인해야한다. new에 비해 속도가 빠르다.
+    C++ 클래스의 생성자, 소멸자를 처리하지 못한다.
+  - new와 delete는 속도가 느리지만, 생성자, 소멸자를 처리할 수 있다. 또한 동작 실패시 예외를 throw한다. (if문이 아닌 try-catch문을 통해 오류를 잡아낼     수 있음.)
+    new와 delete는 오버라이딩이 가능하다. malloc, free는 불가능
+
+네트워크 유량 문제
+시작 정점 S에서 도착 정점 T까지 얼마나 많은 네트워크 유량을 보낼 수 있는지를 구하는 문제
+네트워크의 유량은 다음과 같은 세 가지의 속성을 만족해야 한다.
+   1. 용량 제한 속성 : f(u, v) <= c(u, v) (f : flow, c : capacity) - 각 간선의 유량은 해당 간선의 용량을 초과할 수 없다.
+   2. 유량의 대칭성 : f(u, v) = -f(v, u) : u에서 v로 유량이 흐를 경우, 이를 v에서 u로 동일한 크기의 음수의 유량을 보낸다고 생각할 수 있다.
+   3. 유량의 보존 : sigma f(u, v)=0 : 각 정점에 들어오는 유량과 나가는 유량의 양은 같아야 한다.
+
+  소스 : 유량이 시작되는 정점
+  싱크 : 유량이 도착하는 정점
+  증가 경로 : 유량을 보내는 경로
+  잔여 용량 : 간선의 용량과 유량의 차이, r(u, v) = c(u, v) - f(u, v)
+  차단 간선 : 증가 경로의 간선 중 보낼 수 있는 유량의 양이 최소인 간선
+
+11/18
+다트판 나누는 문제
+   칸이 20개, 360도, -9도부터 시작 -> 각도에 9를 더하고, 이를 18로 나눈 뒤에 다시 20의 나머지 연산을 하면 된다.
+   좌표평면에서 각도 구하는 법 -> atan2(y, x) 사용, 각도는 -PI~PI까지 숫자로 나온다. 각도로 구하려면 여기에 180/PI 를 곱해주면 됨.
+
+이항계수 구하기
+   nCm에서 n과 m이 매우 클 때(문제에서는 100만 이상이었음) 뤼카의 정리 사용 가능
+   
+   (M+N+2)!/((M+1)! * (n+1)!) - 1
+
+나머지 연산 법칙
+   ( a + m ) % m = a % m
+   ( ( a % m ) + ( b % m ) ) % m = ( a + b ) % m 
+   ( ( a % m ) * ( b % m ) ) % m = ( a * b) % m 
+
+미궁 속의 방
+   맵 미리 저장 -> N이 바뀌면 맵의 내용도 바뀌고, N이 최대 100000 이므로 메모리 부족
+   x+y를 통해서 몇 번째 대각선 (왼쪽 아래 - 오른쪽 위) 인지를 알아낼 수 있다. ex) (3, 0)의 경우, x+y=3이므로 4번째 대각선이다.
+   x-y를 통해서 몇 번째 대각선 (왼쪽 위 - 오른쪽 아래) 인지를 알아낼 수 있다. ex) (4, 0)의 경우 x-y = 4 ->가장 아래쪽에 있는 대각선이다.
+								      (0, 4)의 경우 x-y = -4 -> 가장 위쪽에 있는 대각선이다.
+
+11/20
+  COORD
+     - 좌표를 저장하는 구조체. windows.h에 포함되어 있다.
+  SetConsoleCursorPosition(handle, position)
+     - 콘솔의 출력 핸들(handle)을 주면 커서를 position으로 옮겨준다.
+
+  GetStdHandle(STD_OUTPUT_HANDLE)
+     - 표준 콘솔 출력의 핸들을 반환해준다.
+
+11/21
+  c++의 벡터는 처음에는 공간이 0이었다가 사용자가 데이터를 넣으면 1, 2, 3, 6, 9, 13... 식으로 공간을 점점 늘린다.
+     -> vector 안에 Test 객체 a를 넣고 b를 넣을 때 : a, b를 수용할 수 있는 공간을 따로 할당하고 여기에 a를 복사한 뒤
+         기존 공간에 있던 a를 삭제하고 b를 새로운 공간에 복사한다. -> 메모리 생성, 소멸이 불필요하게 많다.
+          -> rvalue 참조자 라는 문법을 이용하여 이동 생성자 (Move Semantic) 이용 가능
+	이동 생성자는 Test(Test &&other)와 같은 형식으로 선언된다.
+
+  NULL과 nullptr의 차이점
+     -> c++ 11 버전에서 추가. c++ 11이전 버전에서는 NULL의 정의가 0으로 되어있었다. 이때문에 NULL이 정수값 0인지, 포인터 주소값으로 null인지를 	구별할 수 없었고, 이때문에 프로그램이 예기치 못한 동작을 할 때가 있었다. 이를 대비하기 위해서 포인터형만 사용할 수 있는 안전한 nullptr을 	만들었다.
+
+  복사 생략
+    어떤 클래스 A에 대해서 A c(A(2)); 와 같이 실행했을 때 A(2)에서 일반 생성자가 한 번, c로 복사할 때 복사 생성자가 한 번 실행될 것 같지만 컴파일러 자    체에서 불필요한 작업을 방지하기 위해 임시로 사용하는 A(2)를 c로 만들어버린다. (상황에 따라 안할수도 있음)
+
+  우측값(rvalue)는 주소를 취할 수 없는, 임시적인 값을 의미하며 식의 오른쪽에만 올 수 있다. 반면에 좌측값(lvalue)는 주소를 취할 수 있으며, 식의 왼쪽,   오른쪽에 모두 올 수 있다. 좌측값의 참조자 또한 좌측값이 된다.
+
+  vector와 같은 컨테이너들은 이동 생성자를 쓰지 않는다. 데이터를 이동하는 도중에 예외가 발생하면 이를 되돌릴 수 없기 때문이다. 다만 이동 생성자에   noexcept 키워드가 붙을 경우 컨테이너들도 이동 생성자를 사용하게 된다.
+
+  noexcept -> void testFunc() noexcept{} 와 같이 사용하며, 해당 메소드는 예외를 던지지 않는 것을 보장한다.
+
+  extern 지정자 -> 현재 모듈이나 외부 모듈 어딘가에 해당 변수나 메소드가 존재한다는 것을 컴파일러에게 알려준다.
+
+  volatile 지정자 -> 변수에만 적용되며, 외부적인 요인으로 변수의 값이 언제든지 바뀔 수 있음을 의미한다. 따라서 컴파일러는 volatile 변수의 최적화를 수                          행하지 않는다. (레지스터의 값을 사용하지 않고 매번 메모리를 참조함.)
+
+  템플릿 형식의 타입 추론 법칙
+      template <class T>
+      void f(paramType param){}
+ 
+      f(expr);
+  1. paramType이 포인터나 참조형 (보편 참조 제외) 인 경우
+         - expr이 참조형인 경우 참조 부분은 무시된다.
+         - 그런 다음 expr의 형식을 ParamType에 대해 패턴 부합 방식으로 대응시켜서 T의 형식을 결정한다.
+
+     ex) template<class T>
+	void f(T& param);
+
+            int x=27;
+	const int cx=x;
+	cosnt int &rx=cs;
+
+            f(x); f(cx); f(rx);
+
+          -> f(x)에서 T는 int형, param은 int &형
+              f(cx)에서 T는 const int형, param은 const int& 형
+              f(rx)에서 T는 const int형, param은 const int& 형 (rx의 참조성 무시)
+     
+             paramType이 const T&일 경우, 모든 경우에서 T는 int형이 된다. paramType이 이미 const형을 포함하기 때문에 T에 const 필요 없음.
+
+  2. ParamType이 보편 참조일 경우
+         - expr이 l-value일 경우, T와 ParamType 둘 다 왼값 참조가 된다.(&) T가 참조형으로 되는 경우는 이 경우가 유일함.
+         - expr이 r-value일 경우, 1번 규칙을 따른다.
+
+       ex) template<class T>
+	void f(T&& param);
+
+            int x=27;
+	const int cx=x;
+	cosnt int &rx=cs;
+
+            f(x); f(cx); f(rx); f(27);
+
+          -> f(x)에서 T는 int &형, param은 int &형
+              f(cx)에서 T는 const int &형, param은 const int& 형
+              f(rx)에서 T는 const int &형, param은 const int& 형 (rx의 참조성 무시)
+              f(27)에서 T는 int형, param은 int &&형
+
+   3. ParamType이 포인터도 아니고 참조도 아님
+         - expr이 참조형 -> 참조성 무시
+         - const, volatile도 무시
+      
+       ex)  template<class T>
+	void f(T param);
+
+            int x=27;
+	const int cx=x;
+	cosnt int &rx=cs;
+
+            f(x); f(cx); f(rx);
+
+          -> f(x)에서 T는 int형, param은 int형
+              f(cx)에서 T는 int형, param은 int형
+              f(rx)에서 T는 int형, param은 int형 (rx의 참조성 무시)
+
+       ex2) template<class T>
+	 void f(T param);
+
+              const char* const ptr = "Fun with pointers";
+ 	  f(ptr);
+          -> f(ptr)에서 T는 const char* 형, param은 const char* 형
+
+       ex2) template<class T>
+	 void f(T& param);
+
+              const char* const ptr = "Fun with pointers";
+ 	  f(ptr);
+          -> f(ptr)에서 T는 const char* const 형, param은  const char* const& 형
+
+  constexpr 지시자 -> 함수 앞에서 사용하며, 함수 호출의 결과를 컴파일 도중에 사용할 수 있게 된다.
+
+  std::size() -> C++ STL 컨테이너들의 원소 갯수를 알 수 있다. <array>, <deque>, <forward_list>, <list>, <map>, <regex>, <set>, <span> (since C++20), <string>, <string_view>, <unordered_map>, <unordered_set>, and <vector>에서 사용 가능.
+
+  
